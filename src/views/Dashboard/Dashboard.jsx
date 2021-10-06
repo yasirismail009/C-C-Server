@@ -52,10 +52,9 @@ function Dashboard (props) {
       StatsData(res.data.data.devices_data[0].device_key)
     })
     .catch((err)=>{
-      alert(err)
+      // alert(err)
     })
   },[])
-console.log(devices)
   const handleChange1 = (event) => {
     setDeviceValue(event);
   };
@@ -71,7 +70,7 @@ console.log(devices)
       setStats(res.data.data)
     })
     .catch((err)=>{
-      alert(err)
+      // alert(err)
     })
   }
 

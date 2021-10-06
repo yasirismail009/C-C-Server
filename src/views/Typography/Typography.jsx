@@ -81,10 +81,9 @@ const [devicesKey , setDeviceKey] = React.useState('')
      
     })
     .catch((err)=>{
-      alert(err)
+      // alert(err)
     })
   },[])
-console.log(devices)
   const handleChange = (event) => {
     setDeviceValue(event);
   };
@@ -102,7 +101,7 @@ console.log(devices)
       setLoading(false)
     })
     .catch((err)=>{
-      alert(err)
+      // alert(err)
     })
   }
 

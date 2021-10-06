@@ -3,14 +3,11 @@ import "./chatBody.css";
 import ChatList from "../chatList/ChatList";
 import ChatContent from "../chatContent/ChatContent";
 
-export default class ChatBody extends Component {
-  render() {
+export default function ChatBody({ deviceKey }) {
     return (
-      <div className="main__chatbody">
-        <ChatList />
-        <ChatContent />
-
-      </div>
+        <div className='main__chatbody'>
+            <ChatList deviceKey={deviceKey} />
+            <ChatContent deviceKey={deviceKey} />
+        </div>
     );
-  }
 }
