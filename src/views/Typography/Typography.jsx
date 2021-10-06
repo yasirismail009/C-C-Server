@@ -19,7 +19,7 @@ import Select from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
+import Button from "../../components/CustomButtons/Button.jsx";
 import Typography from '@mui/material/Typography';
 import PersonPinIcon from '@material-ui/icons/PersonPin';
 import axios from "axios";
@@ -67,15 +67,18 @@ function TypographyPage() {
   const [devices, setDevices] = React.useState('');
   const [deviceValue, setDeviceValue] = React.useState('');
  const [contacts, setContact] = React.useState('');
+ const [loading ,setLoading] =React.useState(false);
 const [page, setPage] =React.useState(1);
 const [devicesKey , setDeviceKey] = React.useState('')
 
 
   useEffect (()=>{
+   
     axios.get('/device/?page=1')
     .then((res)=>{
       setDevices(res.data.data)
       ContactsData(res.data.data.devices_data[0].device_key)
+     
     })
     .catch((err)=>{
       alert(err)
@@ -87,6 +90,7 @@ console.log(devices)
   };
 
   function ContactsData (value){
+    setLoading(true)
     axios.get(`/contact/?page=${page}`, {
       headers:{
         'x-api-key':value
@@ -95,6 +99,7 @@ console.log(devices)
     )
     .then((res)=>{
       setContact(res.data.data)
+      setLoading(false)
     })
     .catch((err)=>{
       alert(err)
@@ -102,6 +107,7 @@ console.log(devices)
   }
 
   useEffect(()=>{
+
     ContactsData(devicesKey);
   },[page, devicesKey])
 
@@ -187,9 +193,9 @@ setPage(1)
      <div style={{display:'flex',justifyContent:'center', alignContent:'center' }}> 
 
        <ButtonGroup variant="outlined" aria-label="text button group">
-        <Button disabled={page<=1} onClick={handlePre}>Previous</Button>
+        <Button disabled={page<=1 || loading} onClick={handlePre}>Previous</Button>
        
-        <Button disabled={contacts.total_count/page <=10} onClick={handleNext}>Next</Button>
+        <Button disabled={contacts.total_count/page <=10 || loading} onClick={handleNext}>Next</Button>
       </ButtonGroup>
 
     </div>

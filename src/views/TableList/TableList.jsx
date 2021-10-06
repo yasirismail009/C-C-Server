@@ -4,7 +4,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 // core components
 import GridItem from "../../components/Grid/GridItem.jsx";
 import GridContainer from "../../components/Grid/GridContainer.jsx";
-import Table from "../../components/Table/Table.jsx";
 import Card from "../../components/Card/Card.jsx";
 import CardHeader from "../../components/Card/CardHeader.jsx";
 import CardBody from "../../components/Card/CardBody.jsx";
@@ -15,7 +14,7 @@ import Select from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
 import './tables.css';
 import axios from 'axios';
-import Button from '@mui/material/Button';
+import Button from "../../components/CustomButtons/Button.jsx";
 import ButtonGroup from '@mui/material/ButtonGroup';
 
 
@@ -54,6 +53,7 @@ function TableList(props) {
   const [deviceValue, setDeviceValue] = React.useState('');
  const [photos, setPhotos] = React.useState('');
  const [page, setPage] =React.useState(1);
+ const [loading , setLoading] = React.useState(false);
  const [devicesKey , setDeviceKey] = React.useState('')
 
 
@@ -74,6 +74,7 @@ console.log(devices)
   };
 
   function PhotosData (value){
+    setLoading(true)
     axios.get(`/picture/?page=${page}`, {
       headers:{
         'x-api-key':value
@@ -82,6 +83,7 @@ console.log(devices)
     )
     .then((res)=>{
       setPhotos(res.data.data)
+      setLoading(false)
     })
     .catch((err)=>{
       alert(err)
@@ -160,9 +162,9 @@ setPage(1)
       <div style={{display:'flex',justifyContent:'center', alignContent:'center' }}> 
 
 <ButtonGroup variant="outlined" aria-label="text button group">
- <Button disabled={page<=1} onClick={handlePre}>Previous</Button>
+ <Button disabled={page<=1 || loading} onClick={handlePre}>Previous</Button>
 
- <Button disabled={photos.total_count/page <=10} onClick={handleNext}>Next</Button>
+ <Button disabled={photos.total_count/page <=10  || loading} onClick={handleNext}>Next</Button>
 
 </ButtonGroup>
 

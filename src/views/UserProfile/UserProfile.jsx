@@ -20,6 +20,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import axios from 'axios';
 import ReactAudioPlayer from 'react-audio-player';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
 
 // const  useStyles = makeStyles((theme) => ({
@@ -47,6 +48,9 @@ const { REACT_APP_SERVER_URL } = process.env;
   const [devices, setDevices] = React.useState('');
   const [deviceValue, setDeviceValue] = React.useState('');
  const [records, setRecords] = React.useState('');
+ const [loading ,setLoading] =React.useState(false);
+ const [page, setPage] =React.useState(1);
+ const [devicesKey , setDeviceKey] = React.useState('')
 
 
 
@@ -66,7 +70,8 @@ console.log(devices)
   };
 
   function RecordsData (value){
-    axios.get('/recording/?page=1', {
+    setLoading(true)
+    axios.get(`/recording/?page=${page}`, {
       headers:{
         'x-api-key':value
       }
@@ -74,12 +79,29 @@ console.log(devices)
     )
     .then((res)=>{
       setRecords(res.data.data)
+      setLoading(false)
     })
     .catch((err)=>{
       alert(err)
     })
   }
 
+  useEffect(()=>{
+    RecordsData(devicesKey);
+  },[page, devicesKey])
+
+  function handleNext (){
+    setPage(page+1)
+    
+   }
+   function handlePre (){
+     setPage(page-1);
+   }
+   function DeviceKeyChange (val){
+    setDeviceKey(val);
+    setPage(1)
+    }
+    
 
     return (
       <div>
@@ -109,7 +131,7 @@ console.log(devices)
        <option selected disabled hidden value={devices.devices_data[0].device_name}>{devices.devices_data[0].device_name}</option> 
        
        { devices.devices_data.map((val, key)=>(
-           <MenuItem onClick={()=>{ RecordsData(val.device_key)}} value={val.device_name} key={key}>{val.device_name}</MenuItem>
+           <MenuItem onClick={()=>{ RecordsData(val.device_key); DeviceKeyChange(val.device_key)}} value={val.device_name} key={key}>{val.device_name}</MenuItem>
          ))} 
        
          
@@ -146,6 +168,15 @@ console.log(devices)
       </Table>
     </TableContainer>
           </CardBody>
+          <div style={{display:'flex',justifyContent:'center', alignContent:'center' }}> 
+
+<ButtonGroup variant="outlined" aria-label="text button group">
+ <Button disabled={page<=1 || loading} onClick={handlePre}>Previous</Button>
+
+ <Button disabled={records.total_count/page <=10 || loading} onClick={handleNext}>Next</Button>
+</ButtonGroup>
+
+</div>
         </Card>
             </GridItem>
           {/* <GridItem xs={12} sm={12} md={4}>
@@ -168,7 +199,7 @@ console.log(devices)
                 </Button>
               </CardBody>
             </Card>*/}
-       
+     
         </GridContainer>
       </div>
     );
