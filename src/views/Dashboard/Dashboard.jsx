@@ -1,4 +1,4 @@
-import React,{useEffect} from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 // react plugin for creating charts
 import ChartistGraph from "react-chartist";
@@ -18,264 +18,280 @@ import CardHeader from "../../components/Card/CardHeader.jsx";
 import CardIcon from "../../components/Card/CardIcon.jsx";
 import CardBody from "../../components/Card/CardBody.jsx";
 import CardFooter from "../../components/Card/CardFooter.jsx";
-import AudiotrackIcon from '@material-ui/icons/Audiotrack';
-import InsertPhotoIcon from '@material-ui/icons/InsertPhoto';
-import ExploreIcon from '@material-ui/icons/Explore';
-import ContactsIcon from '@material-ui/icons/Contacts';
-import MailOutlineIcon from '@material-ui/icons/MailOutline';
-import axios from 'axios';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import {FormControl} from '@mui/material';
-import Select from '@mui/material/Select';
+import AudiotrackIcon from "@material-ui/icons/Audiotrack";
+import InsertPhotoIcon from "@material-ui/icons/InsertPhoto";
+import ExploreIcon from "@material-ui/icons/Explore";
+import ContactsIcon from "@material-ui/icons/Contacts";
+import MailOutlineIcon from "@material-ui/icons/MailOutline";
+import axios from "axios";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import { FormControl } from "@mui/material";
+import Select from "@mui/material/Select";
 
 import {
   dailySalesChart,
   emailsSubscriptionChart,
-  completedTasksChart
+  completedTasksChart,
 } from "../../variables/charts.jsx";
 
 import dashboardStyle from "../../assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
 
-function Dashboard (props) {
-  const [value, setValue] = React.useState('');
-  const [devices, setDevices] = React.useState('');
-  const [deviceValue, setDeviceValue] = React.useState('');
- const [stats, setStats] = React.useState('');
+function Dashboard(props) {
+  const [value, setValue] = React.useState("");
+  const [devices, setDevices] = React.useState("");
+  const [deviceValue, setDeviceValue] = React.useState("");
+  const [stats, setStats] = React.useState("");
+  const [loading, setLoading] = React.useState(true);
 
-
-
-  useEffect (()=>{
-    axios.get('/device/?page=1')
-    .then((res)=>{
-      setDevices(res.data.data)
-      StatsData(res.data.data.devices_data[0].device_key)
-    })
-    .catch((err)=>{
-      // alert(err)
-    })
-  },[])
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get("/device/?page=1")
+      .then((res) => {
+        setDevices(res.data.data);
+        StatsData(res.data.data.devices_data[0].device_key);
+        setLoading(false);
+      })
+      .catch((err) => {
+        // alert(err)
+      });
+  }, []);
   const handleChange1 = (event) => {
     setDeviceValue(event);
   };
 
-  function StatsData (value){
-    axios.get('/reporting/?page=1', {
-      headers:{
-        'x-api-key':value
-      }
-    }
-    )
-    .then((res)=>{
-      setStats(res.data.data)
-    })
-    .catch((err)=>{
-      // alert(err)
-    })
+  function StatsData(value) {
+    axios
+      .get("/reporting/?page=1", {
+        headers: {
+          "x-api-key": value,
+        },
+      })
+      .then((res) => {
+        setStats(res.data.data);
+      })
+      .catch((err) => {
+        // alert(err)
+      });
   }
 
- function handleChange  (event, value)  {
+  function handleChange(event, value) {
     setValue({ value });
-  };
+  }
 
-  function handleChangeIndex (index) {
+  function handleChangeIndex(index) {
     setValue({ value: index });
-  };
+  }
 
-    const { classes } = props;
-    return (
-      <div>
-        <GridContainer>
+  const { classes } = props;
+  return (
+    <div>
+      <GridContainer>
         <GridItem xs={12} sm={12} md={12} lg={12}>
-        {devices.devices_data === null || devices.devices_data === undefined ? null :
-            <div style={{backgroundColor:'#11b8cc' , padding:10 , borderRadius:10}}>   
-      <FormControl fullWidth >
-        <InputLabel id="demo-simple-select-label" >Devices</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={deviceValue === '' ? devices.devices_data[0].device_name : deviceValue }
-          label="Age"
-         onChange={(e)=>{handleChange1(e.target.value,)}}
-        >
-       
-       <option selected disabled hidden value={devices.devices_data[0].device_name}>{devices.devices_data[0].device_name}</option> 
-       
-       { devices.devices_data.map((val, key)=>(
-           <MenuItem onClick={()=>{ StatsData(val.device_key)}} value={val.device_name} key={key}>{val.device_name}</MenuItem>
-         ))} 
-       
-         
-        </Select>
-      </FormControl> 
-            </div> }
-          </GridItem>
-          <GridItem  xs={12} sm={6} md={3}>
-            <Card>
-              <CardHeader color="warning" stats icon>
-                <CardIcon color="warning">
-                  <Icon><InsertPhotoIcon/></Icon>
-                </CardIcon>
-                <p className={classes.cardCategory}>Total Images</p>
-                <h3 className={classes.cardTitle}>
-                  {stats.pictures_count}
-                </h3>
-              </CardHeader>
-              <CardFooter stats>
-                <div className={classes.stats}>
-                
-                    <ExploreIcon />
-             
-                  <Link to="/admin/photos" >
-                    Explore More
-                  </Link>
-                </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-          <GridItem xs={12} sm={6} md={3}>
-            <Card>
-              <CardHeader color="success" stats icon>
-                <CardIcon color="success">
-                  <AudiotrackIcon />
-                </CardIcon>
-                <p className={classes.cardCategory}>Total Audio Recorded</p>
-                <h3 className={classes.cardTitle}>{stats.voice_recording_count}</h3>
-              </CardHeader>
-              <CardFooter stats>
-              <div className={classes.stats}>
-                
-                <ExploreIcon />
-         
-              <Link to="/admin/audio" >
-                Explore More
-              </Link>
+          {!loading && (
+            <div
+              style={{
+                backgroundColor: "#11b8cc",
+                padding: 10,
+                borderRadius: 10,
+              }}
+            >
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Devices</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={
+                    deviceValue === ""
+                      ? devices.devices_data[0].device_name
+                      : deviceValue
+                  }
+                  label="Age"
+                  onChange={(e) => {
+                    handleChange1(e.target.value);
+                  }}
+                >
+                  <option
+                    selected
+                    disabled
+                    hidden
+                    value={devices.devices_data[0].device_name}
+                  >
+                    {devices.devices_data[0].device_name}
+                  </option>
+
+                  {devices &&
+                    devices.devices_data.map((val, key) => (
+                      <MenuItem
+                        onClick={() => {
+                          StatsData(val.device_key);
+                        }}
+                        value={val.device_name}
+                        key={key}
+                      >
+                        {val.device_name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
             </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-          <GridItem xs={12} sm={6} md={3}>
-            <Card>
-              <CardHeader color="danger" stats icon>
-                <CardIcon color="danger">
-                  <Icon><ContactsIcon/></Icon>
-                </CardIcon>
-                <p className={classes.cardCategory}>Contacts</p>
-                <h3 className={classes.cardTitle}>{stats.contacts_count}</h3>
-              </CardHeader>
-              <CardFooter stats>
+          )}
+        </GridItem>
+        <GridItem xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader color="warning" stats icon>
+              <CardIcon color="warning">
+                <Icon>
+                  <InsertPhotoIcon />
+                </Icon>
+              </CardIcon>
+              <p className={classes.cardCategory}>Total Images</p>
+              <h3 className={classes.cardTitle}>{stats.pictures_count}</h3>
+            </CardHeader>
+            <CardFooter stats>
               <div className={classes.stats}>
-                
                 <ExploreIcon />
-         
-              <Link to="/admin/contacts" >
-                Explore More
-              </Link>
-            </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-          <GridItem xs={12} sm={6} md={3}>
-            <Card>
-              <CardHeader color="info" stats icon>
-                <CardIcon color="info">
-                  <MailOutlineIcon />
-                </CardIcon>
-                <p className={classes.cardCategory}>Messages</p>
-                <h3 className={classes.cardTitle}>{stats.sms_count}</h3>
-              </CardHeader>
-              <CardFooter stats>
+
+                <Link to="/admin/photos">Explore More</Link>
+              </div>
+            </CardFooter>
+          </Card>
+        </GridItem>
+        <GridItem xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader color="success" stats icon>
+              <CardIcon color="success">
+                <AudiotrackIcon />
+              </CardIcon>
+              <p className={classes.cardCategory}>Total Audio Recorded</p>
+              <h3 className={classes.cardTitle}>
+                {stats.voice_recording_count}
+              </h3>
+            </CardHeader>
+            <CardFooter stats>
               <div className={classes.stats}>
-                
                 <ExploreIcon />
-         
-              <Link to="/admin/messages" >
-                Explore More
-              </Link>
-            </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-        </GridContainer>
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={4}>
-            <Card chart>
-              <CardHeader color="success">
-                <ChartistGraph
-                  className="ct-chart"
-                  data={dailySalesChart.data}
-                  type="Line"
-                  options={dailySalesChart.options}
-                  listener={dailySalesChart.animation}
-                />
-              </CardHeader>
-              <CardBody>
-                <h4 className={classes.cardTitle}>Daily Messages Recieved</h4>
-                <p className={classes.cardCategory}>
-                  <span className={classes.successText}>
-                    <ArrowUpward className={classes.upArrowCardCategory} /> 55%
-                  </span>{" "}
-                  increase in today.
-                </p>
-              </CardBody>
-              <CardFooter chart>
-                <div className={classes.stats}>
-                  <AccessTime /> updated 4 minutes ago
-                </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-          <GridItem xs={12} sm={12} md={4}>
-            <Card chart>
-              <CardHeader color="warning">
-                <ChartistGraph
-                  className="ct-chart"
-                  data={emailsSubscriptionChart.data}
-                  type="Bar"
-                  options={emailsSubscriptionChart.options}
-                  responsiveOptions={emailsSubscriptionChart.responsiveOptions}
-                  listener={emailsSubscriptionChart.animation}
-                />
-              </CardHeader>
-              <CardBody>
-                <h4 className={classes.cardTitle}>Photos Captures</h4>
-                <p className={classes.cardCategory}>
-                 Yearly Count
-                </p>
-              </CardBody>
-              <CardFooter chart>
-                <div className={classes.stats}>
-                  <AccessTime /> campaign sent 2 days ago
-                </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-          <GridItem xs={12} sm={12} md={4}>
-            <Card chart>
-              <CardHeader color="danger">
-                <ChartistGraph
-                  className="ct-chart"
-                  data={completedTasksChart.data}
-                  type="Line"
-                  options={completedTasksChart.options}
-                  listener={completedTasksChart.animation}
-                />
-              </CardHeader>
-              <CardBody>
-                <h4 className={classes.cardTitle}>Completed Tasks</h4>
-                <p className={classes.cardCategory}>
-                  Last Campaign Performance
-                </p>
-              </CardBody>
-              <CardFooter chart>
-                <div className={classes.stats}>
-                  <AccessTime /> campaign sent 2 days ago
-                </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-        </GridContainer>
-        {/* <GridContainer>
+
+                <Link to="/admin/audio">Explore More</Link>
+              </div>
+            </CardFooter>
+          </Card>
+        </GridItem>
+        <GridItem xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader color="danger" stats icon>
+              <CardIcon color="danger">
+                <Icon>
+                  <ContactsIcon />
+                </Icon>
+              </CardIcon>
+              <p className={classes.cardCategory}>Contacts</p>
+              <h3 className={classes.cardTitle}>{stats.contacts_count}</h3>
+            </CardHeader>
+            <CardFooter stats>
+              <div className={classes.stats}>
+                <ExploreIcon />
+
+                <Link to="/admin/contacts">Explore More</Link>
+              </div>
+            </CardFooter>
+          </Card>
+        </GridItem>
+        <GridItem xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader color="info" stats icon>
+              <CardIcon color="info">
+                <MailOutlineIcon />
+              </CardIcon>
+              <p className={classes.cardCategory}>Messages</p>
+              <h3 className={classes.cardTitle}>{stats.sms_count}</h3>
+            </CardHeader>
+            <CardFooter stats>
+              <div className={classes.stats}>
+                <ExploreIcon />
+
+                <Link to="/admin/messages">Explore More</Link>
+              </div>
+            </CardFooter>
+          </Card>
+        </GridItem>
+      </GridContainer>
+      <GridContainer>
+        <GridItem xs={12} sm={12} md={4}>
+          <Card chart>
+            <CardHeader color="success">
+              <ChartistGraph
+                className="ct-chart"
+                data={dailySalesChart.data}
+                type="Line"
+                options={dailySalesChart.options}
+                listener={dailySalesChart.animation}
+              />
+            </CardHeader>
+            <CardBody>
+              <h4 className={classes.cardTitle}>Daily Messages Recieved</h4>
+              <p className={classes.cardCategory}>
+                <span className={classes.successText}>
+                  <ArrowUpward className={classes.upArrowCardCategory} /> 55%
+                </span>{" "}
+                increase in today.
+              </p>
+            </CardBody>
+            <CardFooter chart>
+              <div className={classes.stats}>
+                <AccessTime /> updated 4 minutes ago
+              </div>
+            </CardFooter>
+          </Card>
+        </GridItem>
+        <GridItem xs={12} sm={12} md={4}>
+          <Card chart>
+            <CardHeader color="warning">
+              <ChartistGraph
+                className="ct-chart"
+                data={emailsSubscriptionChart.data}
+                type="Bar"
+                options={emailsSubscriptionChart.options}
+                responsiveOptions={emailsSubscriptionChart.responsiveOptions}
+                listener={emailsSubscriptionChart.animation}
+              />
+            </CardHeader>
+            <CardBody>
+              <h4 className={classes.cardTitle}>Photos Captures</h4>
+              <p className={classes.cardCategory}>Yearly Count</p>
+            </CardBody>
+            <CardFooter chart>
+              <div className={classes.stats}>
+                <AccessTime /> campaign sent 2 days ago
+              </div>
+            </CardFooter>
+          </Card>
+        </GridItem>
+        <GridItem xs={12} sm={12} md={4}>
+          <Card chart>
+            <CardHeader color="danger">
+              <ChartistGraph
+                className="ct-chart"
+                data={completedTasksChart.data}
+                type="Line"
+                options={completedTasksChart.options}
+                listener={completedTasksChart.animation}
+              />
+            </CardHeader>
+            <CardBody>
+              <h4 className={classes.cardTitle}>Completed Tasks</h4>
+              <p className={classes.cardCategory}>Last Campaign Performance</p>
+            </CardBody>
+            <CardFooter chart>
+              <div className={classes.stats}>
+                <AccessTime /> campaign sent 2 days ago
+              </div>
+            </CardFooter>
+          </Card>
+        </GridItem>
+      </GridContainer>
+      {/* <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <CustomTabs
               title="Tasks:"
@@ -340,11 +356,8 @@ function Dashboard (props) {
             </Card>
           </GridItem>
         </GridContainer> */}
-      </div>
-    );
-  }
-
-
-
+    </div>
+  );
+}
 
 export default withStyles(dashboardStyle)(Dashboard);
