@@ -52,7 +52,7 @@ class LoginPage extends React.Component {
     let loginRequest;
     try {
       loginRequest = await axios.post(
-        `http://${REACT_APP_SERVER_URL}/login`,
+        `https://${REACT_APP_SERVER_URL}/login`,
         {
           ...formValues
         },

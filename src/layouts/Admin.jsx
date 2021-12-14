@@ -89,7 +89,7 @@ class Dashboard extends React.Component {
     let getSessionRequest;
     try {
       getSessionRequest = await axios.get(
-        `http://${REACT_APP_SERVER_URL}/get-session`,
+        `https://${REACT_APP_SERVER_URL}/get-session`,
         {
           withCredentials: true
         }

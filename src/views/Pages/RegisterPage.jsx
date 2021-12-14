@@ -53,7 +53,7 @@ class RegisterPage extends React.Component {
     let registerRequest;
     try {
       registerRequest = await axios.post(
-        `http://${REACT_APP_SERVER_URL}/register`,
+        `https://${REACT_APP_SERVER_URL}/register`,
         {
           ...formValues
         }

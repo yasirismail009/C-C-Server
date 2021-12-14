@@ -50,7 +50,7 @@ class HeaderLinks extends React.Component {
     let logoutRequest;
     try {
       logoutRequest = await axios.post(
-        `http://${REACT_APP_SERVER_URL}/logout`, {}, {
+        `https://${REACT_APP_SERVER_URL}/logout`, {}, {
           withCredentials: true
         }
       );

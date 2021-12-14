@@ -12,7 +12,7 @@ import axios from "axios";
 import store from "./store";
 import "assets/css/material-dashboard-react.css?v=1.6.0";
 
-axios.defaults.baseURL = "http://3.144.34.42:8000/";
+axios.defaults.baseURL = "https://localhost:8000";
 // axios.defaults.headers.common.X-Api-Key = ``;
 
 const hist = createBrowserHistory();
